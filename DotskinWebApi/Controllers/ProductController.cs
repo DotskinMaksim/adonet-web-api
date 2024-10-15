@@ -11,7 +11,7 @@ namespace DotskinWebApi.Controllers
 
         // GET: product
         [HttpGet]
-        public Product GetToode()
+        public Product GetProduct()
         {
             return _product;
         }

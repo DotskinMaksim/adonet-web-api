@@ -24,33 +24,32 @@ namespace DotskinWebApi.Controllers
             return _products;
         }
 
-        // GET: products/delete/0
-        [HttpGet("delete/{index}")]
+        // DELETE: products/delete/0
+        [HttpDelete("delete/{index}")]
         public List<Product> Delete(int index)
         {
-            _products.RemoveAt(index);
+            _products.RemoveAt(index-1);
             return _products;
         }
 
-        // GET: products/delete2/0
-        [HttpGet("delete2/{index}")]
+        // DELETE: products/delete2/0
+        [HttpDelete("delete2/{index}")]
         public string Delete2(int index)
         {
-            _products.RemoveAt(index);
+            _products.RemoveAt(index-1);
             return "Kustutatud!";
         }
 
-        // GET: products/add/6/testtoode/5.0/true
-        [HttpGet("add/{id}/{name}/{price}/{isactive}")]
-        public List<Product> Add(int id, string name, double price, bool isActive)
+        // POST: products/add/6/testtoode/5.0/true
+        [HttpPost("add")]
+        public List<Product> Add([FromBody] Product product)
         {
-            Product product = new Product(id, name, price, isActive);
             _products.Add(product);
             return _products;
         }
 
-        // GET products/add?id=1&name=piim&price=4.5&isactive=false
-        [HttpGet("add")] 
+        // POST products/add?id=1&name=piim&price=4.5&isactive=false
+        [HttpPost("add2")] 
         public List<Product> Add2([FromQuery] int id, [FromQuery] string name, [FromQuery] double price, [FromQuery] bool isActive)
         {
             Product product = new Product(id, name, price, isActive);
@@ -59,8 +58,8 @@ namespace DotskinWebApi.Controllers
         }
 
 
-        // GET products/price-in-dollars/1.5
-        [HttpGet("price-in-dollars/{course}")]
+        // PATCH products/price-in-dollars/1.5
+        [HttpPatch("price-in-dollars/{course}")]
         public List<Product> InDollars(double course)
         {
             for (int i = 0; i < _products.Count; i++)
@@ -71,7 +70,7 @@ namespace DotskinWebApi.Controllers
         }
 
         // või foreachina:
-        // GET products/hind-dollaritesse2/1.5
+        // GET products/price-in-dollars2/1.5
         [HttpGet("price-in-dollars2/{course}")] 
         public List<Product> InDollars2(double course)
         {
@@ -102,13 +101,16 @@ namespace DotskinWebApi.Controllers
 
             return _products;
         }
+
         // GET products/product/2
-        [HttpGet("product/{id}")]
-        public Product GetProductById(int Id)
+        [HttpGet("product/{Num}")]
+        public Product GetProductByNumber(int Num)
         {
-  
-            return _products.FirstOrDefault(product => product.Id == Id);
+
+            return _products.ElementAtOrDefault(Num);
         }
+
+
         // GET products/most-expensive
         [HttpGet("most-expensive")]
         public Product GetTheMostExpensiveProduct()
@@ -116,6 +118,24 @@ namespace DotskinWebApi.Controllers
 
             return _products.OrderByDescending(product => product.Price).FirstOrDefault();
         }
+
+        // PUT products/update
+        [HttpPut("update")]
+        public ActionResult<Product> Update([FromBody] Product product)
+        {
+            Product updatingProduct = _products.FirstOrDefault(p => p.Id == product.Id);
+
+            if (updatingProduct == null)
+            {
+                return NotFound(); 
+            }
+            updatingProduct.Name = product.Name;
+            updatingProduct.Price = product.Price;
+            updatingProduct.IsActive = product.IsActive;
+
+            return Ok(updatingProduct);
+        }
+
     }
 
 }

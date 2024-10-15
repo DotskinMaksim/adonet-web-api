@@ -36,10 +36,10 @@ namespace DotskinWebApi.Controllers
         }
 
         // GET: primitives/do-logs/5
-        [HttpGet("do-logs/{arv}")]
-        public void DoLogs(int arv)
+        [HttpGet("do-logs/{amount}")]
+        public void DoLogs(int amount)
         {
-            for (int i = 0; i < arv; i++)
+            for (int i = 0; i < amount; i++)
             {
                 Console.WriteLine("See on logi nr " + i);
             }
