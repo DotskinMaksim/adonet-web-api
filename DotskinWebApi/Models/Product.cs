@@ -1,13 +1,13 @@
 ﻿namespace DotskinWebApi.Models
 {
-    public class Toode
+    public class Product
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public double Price { get; set; }
         public bool IsActive { get; set; }
 
-        public Toode(int id, string name, double price, bool isActive)
+        public Product(int id, string name, double price, bool isActive)
         {
             Id = id;
             Name = name;

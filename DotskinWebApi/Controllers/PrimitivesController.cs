@@ -4,38 +4,38 @@ namespace DotskinWebApi.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class PrimitiividController : ControllerBase
+    public class PrimitivesController : ControllerBase
     {
 
-        // GET: primitiivid/hello-world
+        // GET: primitives/hello-world
         [HttpGet("hello-world")]
         public string HelloWorld()
         {
-            return "Hello world at " + DateTime.Now;
+            return "Tere päevast, praegu on " + DateTime.Now;
         }
 
-        // GET: primitiivid/hello-variable/mari
-        [HttpGet("hello-variable/{nimi}")]
-        public string HelloVariable(string nimi)
+        // GET: primitives/hello-variable/mari
+        [HttpGet("hello-variable/{name}")]
+        public string HelloVariable(string name)
         {
-            return "Hello " + nimi;
+            return "Tere " + name;
         }
 
-        // GET: primitiivid/add/5/6
+        // GET: primitives/add/5/6
         [HttpGet("add/{nr1}/{nr2}")]
         public int AddNumbers(int nr1, int nr2)
         {
             return nr1 + nr2;
         }
 
-        // GET: primitiivid/multiply/5/6
+        // GET: primitives/multiply/5/6
         [HttpGet("multiply/{nr1}/{nr2}")]
         public int Multiply(int nr1, int nr2)
         {
             return nr1 * nr2;
         }
 
-        // GET: primitiivid/do-logs/5
+        // GET: primitives/do-logs/5
         [HttpGet("do-logs/{arv}")]
         public void DoLogs(int arv)
         {
@@ -44,14 +44,14 @@ namespace DotskinWebApi.Controllers
                 Console.WriteLine("See on logi nr " + i);
             }
         }
-        // GET: primitiivid/rand-num/5/10
+        // GET: primitives/rand-num/5/10
         [HttpGet("rand-num/{nr1}/{nr2}")]
         public int RandNum(int nr1, int nr2)
         {
             Random random= new Random();
             return random.Next(nr1, nr2);
         }
-        // GET: primitiivid/birthday/2006/01
+        // GET: primitives/birthday/2006/01
         [HttpGet("birthday/{year}/{month}")]
         public string Birthday(int year, int month)
         {
