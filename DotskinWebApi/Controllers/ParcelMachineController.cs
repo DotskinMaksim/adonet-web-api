@@ -13,12 +13,22 @@ namespace DotskinWebApi.Controllers
             _httpClient = httpClient;
         }
 
+        //ParcelMachine/omniva
         [HttpGet]
-        public async Task<IActionResult> GetParcelMachines()
+        public async Task<IActionResult> GetOmnivaParcelMachines()
         {
             var response = await _httpClient.GetAsync("https://www.omniva.ee/locations.json");
             var responseBody = await response.Content.ReadAsStringAsync();
             return Content(responseBody, "application/json");
         }
+        ////ParcelMachine/smartpost
+        //[HttpGet("smartpost")]
+        //public async Task<IActionResult> GetSmartpostParcelMachines()
+        //{
+        //    // Küsime andmed SmartPost API-st
+        //    var response = await _httpClient.GetAsync("https://www.smartpost.ee/places.json");
+        //    var responseBody = await response.Content.ReadAsStringAsync();
+        //    return Content(responseBody, "application/json");
+        //}
     }
 }
