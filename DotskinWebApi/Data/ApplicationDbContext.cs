@@ -12,14 +12,12 @@ namespace DotskinWebApi.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
+        public DbSet<Order> Orders { get; set; }
 
-            // Настройка связи "многие ко многим" между User и Product
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Products)
-                .WithMany(p => p.Users);
-        }
+        public DbSet<OrderItem> OrderItems { get; set; }
+
+
+
+
     }
 }

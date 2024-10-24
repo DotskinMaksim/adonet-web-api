@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DotskinWebApi.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
     {

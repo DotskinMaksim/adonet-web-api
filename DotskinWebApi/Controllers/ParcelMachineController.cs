@@ -2,7 +2,7 @@
 
 namespace DotskinWebApi.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ParcelMachineController : ControllerBase
     {

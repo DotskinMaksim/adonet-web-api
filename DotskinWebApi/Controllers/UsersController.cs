@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DotskinWebApi.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -43,7 +43,7 @@ namespace DotskinWebApi.Controllers
 
 
         // POST: users
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<ActionResult<User>> CreateUser(User user)
         {
             _context.Users.Add(user);
@@ -56,7 +56,7 @@ namespace DotskinWebApi.Controllers
        
 
         // DELETE: users/{id}
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await _context.Users.FindAsync(id);

@@ -9,9 +9,8 @@ namespace DotskinWebApi.Models
         public double Price { get; set; }
         public bool IsActive { get; set; }
 
-        // Добавляем коллекцию пользователей
-        [JsonIgnore]
-        public ICollection<User> Users { get; set; }
+        public List<OrderItem> OrderItems { get; set; }
+
 
         public Product(int id, string name, double price, bool isActive)
         {
@@ -19,7 +18,7 @@ namespace DotskinWebApi.Models
             Name = name;
             Price = price;
             IsActive = isActive;
-            Users = new List<User>();  // Инициализируем пустую коллекцию пользователей
+     
         }
     }
 }

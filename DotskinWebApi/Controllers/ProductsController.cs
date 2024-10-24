@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DotskinWebApi.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
@@ -104,8 +104,8 @@ namespace DotskinWebApi.Controllers
             return Ok(existingProduct);
         }
 
-        // GET: products/product/2
-        [HttpGet("product/{id}")]
+        // GET: product/2
+        [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProductById(int id)
         {
             var product = await _context.Products.FindAsync(id);
