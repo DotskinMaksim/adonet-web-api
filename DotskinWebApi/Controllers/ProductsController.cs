@@ -24,8 +24,8 @@ namespace DotskinWebApi.Controllers
             return Ok(products);
         }
 
-        // DELETE: products/delete/1
-        [HttpDelete("delete/{id}")]
+        // DELETE: products/1
+        [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             var product = await _context.Products.FindAsync(id);
@@ -39,17 +39,17 @@ namespace DotskinWebApi.Controllers
             return Ok("Product deleted.");
         }
 
-        // POST: products/add
-        [HttpPost("add")]
-        public async Task<ActionResult<Product>> Add([FromBody] Product product)
-        {
-            await _context.Products.AddAsync(product);
-            await _context.SaveChangesAsync();
-            return Ok(product);
-        }
+        //// POST: products
+        //[HttpPost]
+        //public async Task<ActionResult<Product>> Add([FromBody] Product product)
+        //{
+        //    await _context.Products.AddAsync(product);
+        //    await _context.SaveChangesAsync();
+        //    return Ok(product);
+        //}
 
-        // POST: products/add2?id=1&name=piim&price=4.5&isactive=false
-        [HttpPost("add2")]
+        // POST: products?id=1&name=piim&price=4.5&isactive=false
+        [HttpPost]
         public async Task<ActionResult<Product>> Add2([FromQuery] int id, [FromQuery] string name, [FromQuery] double price, [FromQuery] bool isActive)
         {
             var product = new Product(id, name, price, isActive);
@@ -86,7 +86,7 @@ namespace DotskinWebApi.Controllers
         }
 
         // PUT: products/update
-        [HttpPut("update")]
+        [HttpPut]
         public async Task<ActionResult<Product>> Update([FromBody] Product product)
         {
             var existingProduct = await _context.Products.FindAsync(product.Id);

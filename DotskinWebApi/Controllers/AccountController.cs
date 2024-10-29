@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using DotskinWebApi.Models;
 using DotskinWebApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace DotskinWebApi.Controllers
@@ -12,11 +13,12 @@ namespace DotskinWebApi.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<User> _userManager; 
+        private readonly ApplicationDbContext _context;
 
-        public AccountController(UserManager<User> userManager)
+
+        public AccountController(ApplicationDbContext context)
         {
-            _userManager = userManager;
+            _context = context;
         }
 
         [HttpPost("register")]
@@ -33,14 +35,10 @@ namespace DotskinWebApi.Controllers
                 PasswordHash = model.Password 
             };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
-            if (result.Succeeded)
-            {
-                return Ok(new { message = "Registration successful!" });
-            }
-
-            return BadRequest(result.Errors);
+            return Ok(new { message = "Registration successful!" });
         }
     }
 }

@@ -30,7 +30,7 @@ namespace DotskinWebApi.Controllers
 
             return Ok(orders);
         }
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             var order = await _context.Orders.FindAsync(id);
@@ -46,8 +46,8 @@ namespace DotskinWebApi.Controllers
             return Ok(new { message = "Order deleted successfully" });
         }
 
-        // POST: orders/add
-        [HttpPost("add")]
+        // POST: orders
+        [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder([FromBody] CreateOrderDto orderDto)
         {
             if (orderDto == null || orderDto.UserId <= 0 || orderDto.OrderItems == null || !orderDto.OrderItems.Any())

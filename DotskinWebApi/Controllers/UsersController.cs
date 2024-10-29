@@ -43,7 +43,7 @@ namespace DotskinWebApi.Controllers
 
 
         // POST: users
-        [HttpPost("add")]
+        [HttpPost]
         public async Task<ActionResult<User>> CreateUser(User user)
         {
             _context.Users.Add(user);
@@ -56,7 +56,7 @@ namespace DotskinWebApi.Controllers
        
 
         // DELETE: users/{id}
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
