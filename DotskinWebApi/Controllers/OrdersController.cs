@@ -30,6 +30,7 @@ namespace DotskinWebApi.Controllers
 
             return Ok(orders);
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
@@ -68,6 +69,8 @@ namespace DotskinWebApi.Controllers
                 UserId = orderDto.UserId
             };
 
+            double totalOrderPrice = 0.0;
+
             foreach (var itemDto in orderDto.OrderItems)
             {
                 var product = await _context.Products.FindAsync(itemDto.ProductId);
@@ -75,6 +78,13 @@ namespace DotskinWebApi.Controllers
                 {
                     return NotFound($"Product with ID {itemDto.ProductId} not found.");
                 }
+
+                // Рассчитываем стоимость в зависимости от единицы измерения продукта
+                double itemPrice = product.Unit == "kg"
+                    ? product.PricePerUnit * itemDto.Quantity
+                    : product.PricePerUnit * itemDto.Quantity;
+
+                totalOrderPrice += itemPrice;
 
                 var orderItem = new OrderItem
                 {
@@ -89,7 +99,7 @@ namespace DotskinWebApi.Controllers
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
+            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, new { order, totalOrderPrice });
         }
 
         // GET: orders/{id}
@@ -106,7 +116,10 @@ namespace DotskinWebApi.Controllers
                 return NotFound("Order not found.");
             }
 
-            return Ok(order);
+            // Дополнительно добавим расчет общей стоимости заказа для отдачи на фронтенд
+            var totalOrderPrice = order.OrderItems.Sum(oi => oi.TotalPrice);
+
+            return Ok(new { order, totalOrderPrice });
         }
     }
 }

@@ -10,14 +10,17 @@ namespace DotskinWebApi.Models
         [ForeignKey("Order")]
         public int OrderId { get; set; }
 
+        [ForeignKey("Product")]
+        public int ProductId { get; set; }
+
+        public double Quantity { get; set; } 
+
+        public double TotalPrice => Product.PricePerUnit * Quantity;
+
         [JsonIgnore]
         public Order Order { get; set; }
 
-        [ForeignKey("Product")]
-        public int ProductId { get; set; }
         [JsonIgnore]
         public Product Product { get; set; }
-
-        public int Quantity { get; set; }
     }
 }

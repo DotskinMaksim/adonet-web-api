@@ -3,6 +3,7 @@ using System;
 using DotskinWebApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotskinWebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241106081158_UpdateProductModelAddAmountInStock")]
+    partial class UpdateProductModelAddAmountInStock
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,8 +56,8 @@ namespace DotskinWebApi.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<double>("Quantity")
-                        .HasColumnType("double");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -74,10 +77,6 @@ namespace DotskinWebApi.Migrations
                     b.Property<int>("AmountInStock")
                         .HasColumnType("int");
 
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<bool>("HasBottle")
                         .HasColumnType("tinyint(1)");
 
@@ -92,12 +91,11 @@ namespace DotskinWebApi.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<double>("PricePerUnit")
+                    b.Property<double>("Price")
                         .HasColumnType("double");
 
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<bool>("PricePerKg")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 

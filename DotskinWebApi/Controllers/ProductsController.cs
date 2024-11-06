@@ -2,6 +2,10 @@
 using DotskinWebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DotskinWebApi.Controllers
 {
@@ -15,14 +19,43 @@ namespace DotskinWebApi.Controllers
         {
             _context = context;
         }
-
         // GET: products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> Get()
+        public async Task<ActionResult<IEnumerable<Product>>> Get([FromQuery] string category = null)
         {
-            var products = await _context.Products.ToListAsync();
+            // Если категория не указана, то возвращаем все продукты
+            var products = string.IsNullOrEmpty(category)
+                ? await _context.Products.ToListAsync()  // Все продукты
+                : await _context.Products
+                    .Where(p => p.Category == category)  // Фильтруем по категории
+                    .ToListAsync();
+
             return Ok(products);
         }
+
+        // GET: products/withtax
+        [HttpGet("withtax")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetWithTax([FromQuery] string category = null)
+        {
+            // Если категория не указана, то возвращаем все продукты
+            var products = string.IsNullOrEmpty(category)
+                ? await _context.Products.ToListAsync()  // Все продукты
+                : await _context.Products
+                    .Where(p => p.Category == category)  // Фильтруем по категории
+                    .ToListAsync();
+
+            // Применяем налог и округляем цену
+            foreach (var item in products)
+            {
+                item.PricePerUnit *= 1.20;  // Применяем налог
+                item.PricePerUnit = Math.Round(item.PricePerUnit, 2);  // Округляем до 2 знаков после запятой
+            }
+
+            return Ok(products);
+        }
+
+
+
 
         // DELETE: products/1
         [HttpDelete("{id}")]
@@ -39,20 +72,12 @@ namespace DotskinWebApi.Controllers
             return Ok("Product deleted.");
         }
 
-        //// POST: products
-        //[HttpPost]
-        //public async Task<ActionResult<Product>> Add([FromBody] Product product)
-        //{
-        //    await _context.Products.AddAsync(product);
-        //    await _context.SaveChangesAsync();
-        //    return Ok(product);
-        //}
-
-        // POST: products?id=1&name=piim&price=4.5&isactive=false
+        // POST: products
         [HttpPost]
-        public async Task<ActionResult<Product>> Add2([FromQuery] int id, [FromQuery] string name, [FromQuery] double price, [FromQuery] bool isActive)
+        public async Task<ActionResult<Product>> Add([FromQuery] int id, [FromQuery] string name, [FromQuery] double pricePerUnit, [FromQuery] bool isActive,
+             [FromQuery] string unit, [FromQuery] bool hasBottle, [FromQuery] string imageUrl, [FromQuery] int amountInStock, [FromQuery] string category)
         {
-            var product = new Product(id, name, price, isActive);
+            var product = new Product(id, name, pricePerUnit, isActive, unit, hasBottle, imageUrl, amountInStock, category);
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
             return Ok(product);
@@ -66,7 +91,7 @@ namespace DotskinWebApi.Controllers
 
             foreach (var product in products)
             {
-                product.Price *= course;
+                product.PricePerUnit *= course;
             }
 
             await _context.SaveChangesAsync();
@@ -97,8 +122,13 @@ namespace DotskinWebApi.Controllers
             }
 
             existingProduct.Name = product.Name;
-            existingProduct.Price = product.Price;
+            existingProduct.PricePerUnit = product.PricePerUnit;
             existingProduct.IsActive = product.IsActive;
+            existingProduct.Unit = product.Unit;
+            existingProduct.AmountInStock = product.AmountInStock;
+            existingProduct.HasBottle = product.HasBottle;
+            existingProduct.ImageUrl = product.ImageUrl;
+            existingProduct.Category = product.Category;
 
             await _context.SaveChangesAsync();
             return Ok(existingProduct);
@@ -121,7 +151,7 @@ namespace DotskinWebApi.Controllers
         [HttpGet("most-expensive")]
         public async Task<ActionResult<Product>> GetTheMostExpensiveProduct()
         {
-            var product = await _context.Products.OrderByDescending(p => p.Price).FirstOrDefaultAsync();
+            var product = await _context.Products.OrderByDescending(p => p.PricePerUnit).FirstOrDefaultAsync();
             if (product == null)
             {
                 return NotFound("No products found.");

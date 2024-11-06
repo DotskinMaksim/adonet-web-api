@@ -7,7 +7,7 @@ namespace DotskinWebApi.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private static Product _product = new Product(1, "Koola", 1.5, true);
+        private static Product _product = new Product(1, "Koola", 1.5, true , "item", true, "", 200, "Joogid");
 
         // GET: product
         [HttpGet]
@@ -20,7 +20,7 @@ namespace DotskinWebApi.Controllers
         [HttpGet("increase-price")]
         public Product IncreasePrice()
         {
-            _product.Price = _product.Price + 1;
+            _product.PricePerUnit = _product.PricePerUnit + 1;
             return _product;
         }
         // GET: product/change-activity
@@ -32,7 +32,7 @@ namespace DotskinWebApi.Controllers
         }
 
         // GET: product/change-name/testname
-        [HttpGet("change-name/{name}")]
+        [HttpGet("change-name/{Name}")]
         public Product ChangeName(string Name)
         {
             _product.Name = Name;
@@ -40,10 +40,10 @@ namespace DotskinWebApi.Controllers
         }
 
         // GET: product/multiply-price/3
-        [HttpGet("multiply-price/{num}")]
+        [HttpGet("multiply-price/{Num}")]
         public Product MultiplyPrice(int Num)
         {
-            _product.Price = _product.Price*Num;
+            _product.PricePerUnit = _product.PricePerUnit *Num;
             return _product;
         }
     }

@@ -4,6 +4,9 @@
     {
         public int ProductId { get; set; }
         public int Quantity { get; set; }
+
+        public string Unit { get; set; }       
+        public double PricePerUnit { get; set; } 
     }
 
     public class CreateOrderDto
