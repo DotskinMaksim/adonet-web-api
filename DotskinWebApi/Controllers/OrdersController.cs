@@ -20,6 +20,12 @@ namespace DotskinWebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
+            // Проверка, вошел ли пользователь
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return Unauthorized("User not logged in.");
+            }
             var orders = await _context.Orders
                 .Select(o => new
                 {

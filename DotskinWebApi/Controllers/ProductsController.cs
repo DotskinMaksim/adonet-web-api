@@ -23,11 +23,10 @@ namespace DotskinWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> Get([FromQuery] string category = null)
         {
-            // Если категория не указана, то возвращаем все продукты
             var products = string.IsNullOrEmpty(category)
-                ? await _context.Products.ToListAsync()  // Все продукты
+                ? await _context.Products.ToListAsync()  
                 : await _context.Products
-                    .Where(p => p.Category == category)  // Фильтруем по категории
+                    .Where(p => p.Category == category) 
                     .ToListAsync();
 
             return Ok(products);
@@ -37,18 +36,16 @@ namespace DotskinWebApi.Controllers
         [HttpGet("withtax")]
         public async Task<ActionResult<IEnumerable<Product>>> GetWithTax([FromQuery] string category = null)
         {
-            // Если категория не указана, то возвращаем все продукты
             var products = string.IsNullOrEmpty(category)
-                ? await _context.Products.ToListAsync()  // Все продукты
+                ? await _context.Products.ToListAsync()  
                 : await _context.Products
-                    .Where(p => p.Category == category)  // Фильтруем по категории
+                    .Where(p => p.Category == category)  
                     .ToListAsync();
 
-            // Применяем налог и округляем цену
             foreach (var item in products)
             {
-                item.PricePerUnit *= 1.20;  // Применяем налог
-                item.PricePerUnit = Math.Round(item.PricePerUnit, 2);  // Округляем до 2 знаков после запятой
+                item.PricePerUnit *= 1.20;  
+                item.PricePerUnit = Math.Round(item.PricePerUnit, 2);  
             }
 
             return Ok(products);
