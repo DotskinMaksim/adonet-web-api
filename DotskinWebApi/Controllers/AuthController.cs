@@ -34,19 +34,26 @@ namespace DotskinWebApi.Controllers
                 return BadRequest("Username is already taken.");
             }
 
+            if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
+            {
+                return BadRequest("Email is already in use.");
+            }
+
             var user = new User
             {
                 UserName = registerDto.UserName,
                 PasswordHash = HashPassword(registerDto.Password),
-                FirstName = registerDto.FirstName,
-                LastName = registerDto.LastName
+                Email = registerDto.Email,
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok("Registration successful.");
+            // Убедитесь, что возвращаем ответ в формате JSON
+            return Ok(new { message = "Registration successful." });
         }
+
+
         [HttpGet("check")]
         public IActionResult CheckAuth()
         {
