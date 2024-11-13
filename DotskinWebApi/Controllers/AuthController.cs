@@ -19,6 +19,12 @@ namespace DotskinWebApi.Controllers
         {
             _context = context;
         }
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // Очистить сессию
+            return Ok("Logout successful.");
+        }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto registerDto)
@@ -41,6 +47,17 @@ namespace DotskinWebApi.Controllers
 
             return Ok("Registration successful.");
         }
+        [HttpGet("check")]
+        public IActionResult CheckAuth()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId.HasValue)
+            {
+                return Ok();
+            }
+            return Unauthorized();
+        }
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
