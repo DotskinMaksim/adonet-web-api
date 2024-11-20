@@ -42,8 +42,16 @@ namespace DotskinWebApi.Controllers
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var jsonDoc = JsonDocument.Parse(responseContent);
-                var paymentLink = jsonDoc.RootElement.GetProperty("payment_link");
-                return Ok(paymentLink);
+
+                // Check if payment_link exists
+                if (jsonDoc.RootElement.TryGetProperty("payment_link", out var paymentLink))
+                {
+                    return Ok(new { paymentLink = paymentLink.GetString() }); // Return the payment link in the proper JSON format
+                }
+                else
+                {
+                    return BadRequest("Payment link not received");
+                }
             }
             else
             {

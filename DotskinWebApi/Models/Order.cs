@@ -8,9 +8,7 @@ namespace DotskinWebApi.Models
         public int Id { get; set; }
 
         public DateOnly Date { get; set; } = DateOnly.FromDateTime(DateTime.Now);
-
-        public bool IsPaid { get; set; }
-
+        
         [ForeignKey("User")]
         public int UserId { get; set; }
 

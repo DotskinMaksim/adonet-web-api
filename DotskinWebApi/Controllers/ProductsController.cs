@@ -72,7 +72,7 @@ namespace DotskinWebApi.Controllers
         // POST: products
         [HttpPost]
         public async Task<ActionResult<Product>> Add([FromQuery] int id, [FromQuery] string name, [FromQuery] double pricePerUnit, [FromQuery] bool isActive,
-             [FromQuery] string unit, [FromQuery] bool hasBottle, [FromQuery] string imageUrl, [FromQuery] int amountInStock, [FromQuery] string category)
+             [FromQuery] string unit, [FromQuery] bool hasBottle, [FromQuery] string imageUrl, [FromQuery] double amountInStock, [FromQuery] string category)
         {
             var product = new Product(id, name, pricePerUnit, isActive, unit, hasBottle, imageUrl, amountInStock, category);
             await _context.Products.AddAsync(product);

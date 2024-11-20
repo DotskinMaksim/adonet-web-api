@@ -20,12 +20,12 @@ namespace DotskinWebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
-            // Проверка, вошел ли пользователь
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-            {
-                return Unauthorized("User not logged in.");
-            }
+            // // Проверка, вошел ли пользователь
+            // var userId = HttpContext.Session.GetInt32("UserId");
+            // if (userId == null)
+            // {
+            //     return Unauthorized("User not logged in.");
+            // }
             var orders = await _context.Orders
                 .Select(o => new
                 {
@@ -53,26 +53,30 @@ namespace DotskinWebApi.Controllers
             return Ok(new { message = "Order deleted successfully" });
         }
 
-        // POST: orders
         [HttpPost]
-        public async Task<ActionResult<Order>> CreateOrder([FromBody] CreateOrderDto orderDto)
+        public async Task<ActionResult<Order>> CreateOrder([FromQuery] int? userId, [FromBody] CreateOrderDto orderDto)
         {
-            if (orderDto == null || orderDto.UserId <= 0 || orderDto.OrderItems == null || !orderDto.OrderItems.Any())
+            // Проверяем, есть ли userId в Query или в сессии
+            if (!userId.HasValue || userId.Value <= 0)
             {
-                return BadRequest("Invalid order data.");
+                userId = HttpContext.Session.GetInt32("UserId");
             }
 
-            var user = await _context.Users.FindAsync(orderDto.UserId);
-            if (user == null)
+            // Если userId всё ещё отсутствует, возвращаем ошибку
+            if (!userId.HasValue || userId.Value <= 0)
             {
-                return NotFound("User not found.");
+                return Unauthorized("User not logged in or session expired.");
+            }
+            
+            if (orderDto == null || orderDto.OrderItems == null || !orderDto.OrderItems.Any())
+            {
+                return BadRequest("Invalid order data.");
             }
 
             var order = new Order
             {
                 Date = DateOnly.FromDateTime(DateTime.Now),
-                IsPaid = orderDto.IsPaid,
-                UserId = orderDto.UserId
+                UserId = userId.Value
             };
 
             double totalOrderPrice = 0.0;
@@ -83,6 +87,11 @@ namespace DotskinWebApi.Controllers
                 if (product == null)
                 {
                     return NotFound($"Product with ID {itemDto.ProductId} not found.");
+                }
+
+                if (product.AmountInStock < itemDto.Quantity)
+                {
+                    return BadRequest("Not enough product in stock.");
                 }
 
                 // Рассчитываем стоимость в зависимости от единицы измерения продукта
@@ -100,6 +109,8 @@ namespace DotskinWebApi.Controllers
                 };
 
                 _context.OrderItems.Add(orderItem);
+                
+                product.AmountInStock -= orderItem.Quantity;
             }
 
             _context.Orders.Add(order);

@@ -10,7 +10,8 @@ builder.Services.AddSession(options =>
 {
     options.Cookie.HttpOnly = true;  // Только для HTTP-запросов
     options.Cookie.IsEssential = true;  // Необходимо для работы сессий
-    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax; // Для корректной работы с куки
+    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.None; 
 });
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

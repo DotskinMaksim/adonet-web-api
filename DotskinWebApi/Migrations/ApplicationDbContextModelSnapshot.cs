@@ -28,9 +28,6 @@ namespace DotskinWebApi.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -71,8 +68,8 @@ namespace DotskinWebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("AmountInStock")
-                        .HasColumnType("int");
+                    b.Property<double>("AmountInStock")
+                        .HasColumnType("double");
 
                     b.Property<string>("Category")
                         .IsRequired()

@@ -64,6 +64,17 @@ namespace DotskinWebApi.Controllers
             }
             return Unauthorized();
         }
+        
+        [HttpGet("get-id")]
+        public IActionResult GetUserId()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId.HasValue)
+            {
+                return Ok(new { userId = userId.Value });
+            }
+            return Unauthorized();
+        }
 
 
         [HttpPost("login")]
@@ -75,9 +86,18 @@ namespace DotskinWebApi.Controllers
             {
                 return Unauthorized("Invalid username or password.");
             }
+
+            // Устанавливаем userId в сессии
             HttpContext.Session.SetInt32("UserId", user.Id);
 
-            return Ok("Login successful.");
+            var sessionValue = HttpContext.Session.GetInt32("UserId");
+            if (!sessionValue.HasValue)
+            {
+                return Problem("Session could not be established.");
+            }
+
+            // Возвращаем ID пользователя в ответе
+            return Ok(new { message = "Login successful.", userId = user.Id });
         }
 
         private string HashPassword(string password)

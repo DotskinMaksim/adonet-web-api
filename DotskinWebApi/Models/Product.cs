@@ -9,7 +9,7 @@ namespace DotskinWebApi.Models
 
         public double PricePerUnit { get; set; }
 
-        public int AmountInStock { get; set; }
+        public double AmountInStock { get; set; }
 
         public string Unit { get; set; }  
 
@@ -22,7 +22,7 @@ namespace DotskinWebApi.Models
 
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
-        public Product(int id, string name, double pricePerUnit, bool isActive, string unit, bool hasBottle, string imageUrl, int amountInStock, string category)
+        public Product(int id, string name, double pricePerUnit, bool isActive, string unit, bool hasBottle, string imageUrl, double amountInStock, string category)
         {
             Id = id;
             Name = name;
