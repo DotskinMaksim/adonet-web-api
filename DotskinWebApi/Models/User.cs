@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text;
+using System.Text.Json.Serialization;
+using System.Security.Cryptography;
 
 namespace DotskinWebApi.Models
 {
@@ -14,14 +16,22 @@ namespace DotskinWebApi.Models
 
 
 
-        public User(int id, string userName, string password, string email)
+        public User(string userName, string password, string email)
         {
-            Id = id;
             UserName = userName;
             Email = email;
-            PasswordHash = password;
+            PasswordHash = HashPassword(password);
 
         }
         public User() { }
+
+        public string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            }
+        }
     }
 }

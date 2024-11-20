@@ -18,13 +18,7 @@ namespace DotskinWebApi.Controllers
         public AuthController(ApplicationDbContext context)
         {
             _context = context;
-        }
-        [HttpPost("logout")]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear(); // Очистить сессию
-            return Ok("Logout successful.");
-        }
+        }      
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto registerDto)
@@ -39,42 +33,13 @@ namespace DotskinWebApi.Controllers
                 return BadRequest("Email is already in use.");
             }
 
-            var user = new User
-            {
-                UserName = registerDto.UserName,
-                PasswordHash = HashPassword(registerDto.Password),
-                Email = registerDto.Email,
-            };
-
+            var user = new User(registerDto.UserName, registerDto.Password, registerDto.Email);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // Убедитесь, что возвращаем ответ в формате JSON
             return Ok(new { message = "Registration successful." });
         }
 
-
-        [HttpGet("check")]
-        public IActionResult CheckAuth()
-        {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId.HasValue)
-            {
-                return Ok();
-            }
-            return Unauthorized();
-        }
-        
-        [HttpGet("get-id")]
-        public IActionResult GetUserId()
-        {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId.HasValue)
-            {
-                return Ok(new { userId = userId.Value });
-            }
-            return Unauthorized();
-        }
 
 
         [HttpPost("login")]
@@ -82,31 +47,12 @@ namespace DotskinWebApi.Controllers
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == loginDto.UserName);
 
-            if (user == null || user.PasswordHash != HashPassword(loginDto.Password))
+            if (user == null || user.PasswordHash != user.HashPassword(loginDto.Password))
             {
                 return Unauthorized("Invalid username or password.");
             }
-
-            // Устанавливаем userId в сессии
-            HttpContext.Session.SetInt32("UserId", user.Id);
-
-            var sessionValue = HttpContext.Session.GetInt32("UserId");
-            if (!sessionValue.HasValue)
-            {
-                return Problem("Session could not be established.");
-            }
-
-            // Возвращаем ID пользователя в ответе
+          
             return Ok(new { message = "Login successful.", userId = user.Id });
-        }
-
-        private string HashPassword(string password)
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
-            }
         }
     }
 }

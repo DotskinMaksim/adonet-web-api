@@ -20,12 +20,7 @@ namespace DotskinWebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
-            // // Проверка, вошел ли пользователь
-            // var userId = HttpContext.Session.GetInt32("UserId");
-            // if (userId == null)
-            // {
-            //     return Unauthorized("User not logged in.");
-            // }
+        
             var orders = await _context.Orders
                 .Select(o => new
                 {
@@ -54,29 +49,18 @@ namespace DotskinWebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Order>> CreateOrder([FromQuery] int? userId, [FromBody] CreateOrderDto orderDto)
+        public async Task<ActionResult<Order>> CreateOrder([FromQuery] int userId, [FromBody] CreateOrderDto orderDto)
         {
-            // Проверяем, есть ли userId в Query или в сессии
-            if (!userId.HasValue || userId.Value <= 0)
-            {
-                userId = HttpContext.Session.GetInt32("UserId");
-            }
 
-            // Если userId всё ещё отсутствует, возвращаем ошибку
-            if (!userId.HasValue || userId.Value <= 0)
+            if (userId <= 0)
             {
                 return Unauthorized("User not logged in or session expired.");
-            }
-            
-            if (orderDto == null || orderDto.OrderItems == null || !orderDto.OrderItems.Any())
-            {
-                return BadRequest("Invalid order data.");
             }
 
             var order = new Order
             {
                 Date = DateOnly.FromDateTime(DateTime.Now),
-                UserId = userId.Value
+                UserId = userId
             };
 
             double totalOrderPrice = 0.0;
@@ -94,7 +78,6 @@ namespace DotskinWebApi.Controllers
                     return BadRequest("Not enough product in stock.");
                 }
 
-                // Рассчитываем стоимость в зависимости от единицы измерения продукта
                 double itemPrice = product.Unit == "kg"
                     ? product.PricePerUnit * itemDto.Quantity
                     : product.PricePerUnit * itemDto.Quantity;
@@ -133,7 +116,6 @@ namespace DotskinWebApi.Controllers
                 return NotFound("Order not found.");
             }
 
-            // Дополнительно добавим расчет общей стоимости заказа для отдачи на фронтенд
             var totalOrderPrice = order.OrderItems.Sum(oi => oi.TotalPrice);
 
             return Ok(new { order, totalOrderPrice });

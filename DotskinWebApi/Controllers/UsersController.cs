@@ -2,6 +2,7 @@
 using DotskinWebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 
 namespace DotskinWebApi.Controllers
 {
@@ -44,8 +45,9 @@ namespace DotskinWebApi.Controllers
 
         // POST: users
         [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(User user)
+        public async Task<ActionResult<User>> CreateUser([FromQuery]string userName, string email, string password)
         {
+            User user = new User(userName, password, email );
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
