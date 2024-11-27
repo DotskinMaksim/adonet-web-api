@@ -5,25 +5,25 @@
 namespace DotskinWebApi.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateProductAddImageUrl : Migration
+    public partial class UpdateOrderModelAddTotalPrice : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "ImageUrl",
-                table: "Products",
-                type: "longtext",
-                nullable: false)
-                .Annotation("MySql:CharSet", "utf8mb4");
+            migrationBuilder.AddColumn<double>(
+                name: "TotalPrice",
+                table: "Orders",
+                type: "double",
+                nullable: false,
+                defaultValue: 0.0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ImageUrl",
-                table: "Products");
+                name: "TotalPrice",
+                table: "Orders");
         }
     }
 }

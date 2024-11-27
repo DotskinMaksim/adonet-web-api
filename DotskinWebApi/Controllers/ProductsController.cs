@@ -44,7 +44,7 @@ namespace DotskinWebApi.Controllers
 
             foreach (var item in products)
             {
-                item.PricePerUnit *= 1.20;  
+                item.PricePerUnit = TaxCalculator.GetWithTax(item.PricePerUnit) ;  
                 item.PricePerUnit = Math.Round(item.PricePerUnit, 2);  
             }
 

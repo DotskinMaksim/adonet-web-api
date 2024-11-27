@@ -8,6 +8,8 @@ namespace DotskinWebApi.Models
         public int Id { get; set; }
 
         public DateOnly Date { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+
+        public double TotalPrice { get; set; }
         
         [ForeignKey("User")]
         public int UserId { get; set; }
@@ -16,6 +18,9 @@ namespace DotskinWebApi.Models
         public User User { get; set; }
 
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
+
+        
 
     }
 }

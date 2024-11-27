@@ -28,6 +28,9 @@ namespace DotskinWebApi.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("double");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 

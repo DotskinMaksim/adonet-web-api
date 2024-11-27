@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotskinWebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241106101729_UpdateProductModelAddCategory")]
-    partial class UpdateProductModelAddCategory
+    [Migration("20241120092356_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,9 +30,6 @@ namespace DotskinWebApi.Migrations
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
-
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -74,8 +71,8 @@ namespace DotskinWebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("AmountInStock")
-                        .HasColumnType("int");
+                    b.Property<double>("AmountInStock")
+                        .HasColumnType("double");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -113,11 +110,7 @@ namespace DotskinWebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("LastName")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("longtext");
 
