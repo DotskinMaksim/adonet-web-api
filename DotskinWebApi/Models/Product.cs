@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DotskinWebApi.Models
 {
@@ -13,8 +14,9 @@ namespace DotskinWebApi.Models
 
         public string Unit { get; set; }  
 
-        public string Category { get; set; } 
-
+        [ForeignKey("Category")]
+        public int CategoryId { get; set; }
+        public Category Category { get; set; } 
         public bool HasBottle { get; set; }
 
         public bool IsActive { get; set; }
@@ -22,9 +24,8 @@ namespace DotskinWebApi.Models
 
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
-        public Product(int id, string name, double pricePerUnit, bool isActive, string unit, bool hasBottle, string imageUrl, double amountInStock, string category)
+        public Product(string name, double pricePerUnit, bool isActive, string unit, bool hasBottle, string imageUrl, double amountInStock, int categoryId)
         {
-            Id = id;
             Name = name;
             PricePerUnit = pricePerUnit;
             IsActive = isActive;
@@ -32,7 +33,7 @@ namespace DotskinWebApi.Models
             HasBottle = hasBottle;
             ImageUrl = imageUrl;
             AmountInStock = amountInStock;
-            Category = category;
+            CategoryId = categoryId;
         }
     }
 }

@@ -19,22 +19,6 @@ namespace DotskinWebApi.Controllers
         {
             _context = context;
         }
-        // // GET: products
-        // [HttpGet]
-        // public async Task<ActionResult<IEnumerable<Product>>> Get([FromQuery] string category = null)
-        // {
-        //     var products = string.IsNullOrEmpty(category)
-        //         ? await _context.Products
-        //             .Where(p =>  p.AmountInStock > 0)  
-        //             .ToListAsync()  
-        //         : await _context.Products
-        //             .Where(p => p.Category == category) 
-        //             .ToListAsync();
-        //
-        //     return Ok(products);
-        // }
-
-        // GET: products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> Get(
             [FromQuery] string category = null,
@@ -42,7 +26,7 @@ namespace DotskinWebApi.Controllers
             [FromQuery] int? limit = null,
             [FromQuery] bool withTax = false,
             [FromQuery] bool withBottlePrice = false
-            )
+        )
         {
             if (limit.HasValue && limit <= 0)
             {
@@ -52,12 +36,13 @@ namespace DotskinWebApi.Controllers
             var query = _context.Products
                 .Where(p => p.AmountInStock > 0);
 
+            // Filter by category if provided
             if (!string.IsNullOrEmpty(category))
             {
-                query = query.Where(p => p.Category == category);
+                query = query.Where(p => p.Category.NameEn == category);  // Make sure to use the correct field for filtering
             }
 
-            // Если limit задан, применяем пагинацию
+            // Apply pagination
             if (limit.HasValue)
             {
                 query = query.Skip(offset).Take(limit.Value);
@@ -65,7 +50,7 @@ namespace DotskinWebApi.Controllers
 
             var products = await query.ToListAsync();
 
-            // Если указан флаг withTax, добавляем налог
+            // Apply tax if needed
             if (withTax)
             {
                 foreach (var item in products)
@@ -74,6 +59,8 @@ namespace DotskinWebApi.Controllers
                     item.PricePerUnit = Math.Round(item.PricePerUnit, 2);
                 }
             }
+
+            // Apply bottle price if needed
             if (withBottlePrice)
             {
                 foreach (var item in products)
@@ -84,9 +71,32 @@ namespace DotskinWebApi.Controllers
                     }
                 }
             }
+
             return Ok(products);
         }
+        [HttpGet("categories")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories([FromQuery] string lang = "en")
+        {
+            var categories = await _context.Categories.ToListAsync();
 
+            if (categories == null || categories.Count == 0)
+            {
+                return NotFound("No categories found");
+            }
+
+            // Возвращаем категории с учетом выбранного языка
+            foreach (var category in categories)
+            {
+                category.Name = lang switch
+                {
+                    "et" => category.NameEt,
+                    "ru" => category.NameRu,
+                    _ => category.NameEn // по умолчанию на английском
+                };
+            }
+
+            return Ok(categories);
+        }
 
         // DELETE: products/1
         [HttpDelete("{id}")]
@@ -105,14 +115,24 @@ namespace DotskinWebApi.Controllers
 
         // POST: products
         [HttpPost]
-        public async Task<ActionResult<Product>> Add([FromQuery] int id, [FromQuery] string name, [FromQuery] double pricePerUnit, [FromQuery] bool isActive,
-             [FromQuery] string unit, [FromQuery] bool hasBottle, [FromQuery] string imageUrl, [FromQuery] double amountInStock, [FromQuery] string category)
-        {
-            var product = new Product(id, name, pricePerUnit, isActive, unit, hasBottle, imageUrl, amountInStock, category);
+        public async Task<ActionResult<Product>> Add(
+            [FromQuery] string name, 
+            [FromQuery] double pricePerUnit, 
+            [FromQuery] bool isActive,
+            [FromQuery] string unit, 
+            [FromQuery] bool hasBottle, 
+            [FromQuery] string imageUrl, 
+            [FromQuery] double amountInStock, 
+            [FromQuery] int categoryId)
+        {       
+
+            var product = new Product(name, pricePerUnit, isActive, unit, hasBottle, imageUrl, amountInStock, categoryId);
+
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
             return Ok(product);
         }
+
 
         // PATCH: products/price-in-dollars/1.5
         [HttpPatch("price-in-dollars/{course}")]

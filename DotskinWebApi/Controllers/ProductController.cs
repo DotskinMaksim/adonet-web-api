@@ -10,7 +10,7 @@ namespace DotskinWebApi.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        private static Product _product = new Product(1, "Koola", 1.5, true , "item", true, "", 200, "Joogid");
+        private static Product _product = new Product("Koola", 1.5, true , "item", true, "", 200, 1);
         
         public ProductController(ApplicationDbContext context)
         {
