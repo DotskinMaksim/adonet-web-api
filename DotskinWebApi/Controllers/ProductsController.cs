@@ -19,39 +19,73 @@ namespace DotskinWebApi.Controllers
         {
             _context = context;
         }
+        // // GET: products
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<Product>>> Get([FromQuery] string category = null)
+        // {
+        //     var products = string.IsNullOrEmpty(category)
+        //         ? await _context.Products
+        //             .Where(p =>  p.AmountInStock > 0)  
+        //             .ToListAsync()  
+        //         : await _context.Products
+        //             .Where(p => p.Category == category) 
+        //             .ToListAsync();
+        //
+        //     return Ok(products);
+        // }
+
         // GET: products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> Get([FromQuery] string category = null)
+        public async Task<ActionResult<IEnumerable<Product>>> Get(
+            [FromQuery] string category = null,
+            [FromQuery] int offset = 0,
+            [FromQuery] int? limit = null,
+            [FromQuery] bool withTax = false,
+            [FromQuery] bool withBottlePrice = false
+            )
         {
-            var products = string.IsNullOrEmpty(category)
-                ? await _context.Products.ToListAsync()  
-                : await _context.Products
-                    .Where(p => p.Category == category) 
-                    .ToListAsync();
-
-            return Ok(products);
-        }
-
-        // GET: products/withtax
-        [HttpGet("withtax")]
-        public async Task<ActionResult<IEnumerable<Product>>> GetWithTax([FromQuery] string category = null)
-        {
-            var products = string.IsNullOrEmpty(category)
-                ? await _context.Products.ToListAsync()  
-                : await _context.Products
-                    .Where(p => p.Category == category)  
-                    .ToListAsync();
-
-            foreach (var item in products)
+            if (limit.HasValue && limit <= 0)
             {
-                item.PricePerUnit = TaxCalculator.GetWithTax(item.PricePerUnit) ;  
-                item.PricePerUnit = Math.Round(item.PricePerUnit, 2);  
+                return BadRequest("Limit must be greater than 0.");
             }
 
+            var query = _context.Products
+                .Where(p => p.AmountInStock > 0);
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                query = query.Where(p => p.Category == category);
+            }
+
+            // Если limit задан, применяем пагинацию
+            if (limit.HasValue)
+            {
+                query = query.Skip(offset).Take(limit.Value);
+            }
+
+            var products = await query.ToListAsync();
+
+            // Если указан флаг withTax, добавляем налог
+            if (withTax)
+            {
+                foreach (var item in products)
+                {
+                    item.PricePerUnit = TaxCalculator.GetWithTax(item.PricePerUnit);
+                    item.PricePerUnit = Math.Round(item.PricePerUnit, 2);
+                }
+            }
+            if (withBottlePrice)
+            {
+                foreach (var item in products)
+                {
+                    if (item.HasBottle)
+                    {
+                        item.PricePerUnit += 0.10;
+                    }
+                }
+            }
             return Ok(products);
         }
-
-
 
 
         // DELETE: products/1

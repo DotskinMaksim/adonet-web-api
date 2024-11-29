@@ -1,5 +1,6 @@
 ﻿using DotskinWebApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using DotskinWebApi.Data;
 
 namespace DotskinWebApi.Controllers
 {
@@ -7,8 +8,31 @@ namespace DotskinWebApi.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private static Product _product = new Product(1, "Koola", 1.5, true , "item", true, "", 200, "Joogid");
+        private readonly ApplicationDbContext _context;
 
+        private static Product _product = new Product(1, "Koola", 1.5, true , "item", true, "", 200, "Joogid");
+        
+        public ProductController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+    
+        [HttpPost("check-stock")]
+        public IActionResult CheckStock(int productId, int quantity)
+        {
+            var product = _context.Products.FirstOrDefault(p => p.Id == productId);
+            if (product == null)
+            {
+                return NotFound("Товар не найден.");
+            }
+
+            if (product.AmountInStock < quantity)
+            {
+                return BadRequest(new { message = $"Недостаточно товара на складе. Доступно: {product.AmountInStock}" });
+            }
+
+            return Ok();
+        }
         // GET: product
         [HttpGet]
         public Product GetProduct()

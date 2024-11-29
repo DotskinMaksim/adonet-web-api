@@ -46,7 +46,7 @@ namespace DotskinWebApi.Controllers
                 // Check if payment_link exists
                 if (jsonDoc.RootElement.TryGetProperty("payment_link", out var paymentLink))
                 {
-                    return Ok(new { paymentLink = paymentLink.GetString() }); // Return the payment link in the proper JSON format
+                    return Ok(paymentLink);
                 }
                 else
                 {
