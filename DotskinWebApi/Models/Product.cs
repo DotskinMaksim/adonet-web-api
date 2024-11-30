@@ -7,7 +7,11 @@ namespace DotskinWebApi.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-
+        
+        public string NameEt { get; set; }
+        public string NameEn { get; set; }
+        public string NameRu { get; set; }
+        
         public double PricePerUnit { get; set; }
 
         public double AmountInStock { get; set; }
@@ -34,6 +38,15 @@ namespace DotskinWebApi.Models
             ImageUrl = imageUrl;
             AmountInStock = amountInStock;
             CategoryId = categoryId;
+        }
+        public string GetName(string language)
+        {
+            return language switch
+            {
+                "ru" => NameRu,
+                "en" => NameEn,
+                _ => NameEt
+            };
         }
     }
 }

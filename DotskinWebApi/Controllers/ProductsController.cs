@@ -74,6 +74,7 @@ namespace DotskinWebApi.Controllers
 
             return Ok(products);
         }
+       
         [HttpGet("categories")]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategories([FromQuery] string lang = "en")
         {

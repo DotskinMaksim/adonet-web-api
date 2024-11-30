@@ -58,18 +58,20 @@ namespace DotskinWebApi.Controllers
                 TotalPrice = o.TotalPrice,
                 Items = o.OrderItems.Select(oi => new
                 {
-                    oi.Product.Name,
+                    oi.Product.Id,
+                    Names = new
+                    {
+                        En = oi.Product.NameEn,
+                        Et = oi.Product.NameEt,
+                        Ru = oi.Product.NameRu
+                    },
                     oi.Quantity,
                     oi.Product.Unit
-     
                 }).ToList()
             }).ToList();
 
             return Ok(orderHistory);
         }
-
-
-
 
 
         [HttpDelete("{id}")]
